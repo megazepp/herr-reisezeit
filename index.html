@@ -13,4 +13,17 @@
 <section class="card tabcontent" id="budget"><div class="cardhead"><h2>Reisekasse</h2><span class="pill">FÜR 2 PERSONEN</span></div><label>Gesamtbudget (€)<input id="total" type="number" value="2300"></label><label>Flüge (€)<input id="f" type="number" value="0"></label><label>Hotels (€)<input id="h" type="number" value="0"></label><label>Sonstiges (€)<input id="o" type="number" value="0"></label><div class="remaining">Noch verfügbar<b id="left">2.300 €</b></div></section><footer>HERR REISEZEIT · DEIN PIXEL-REISEBÜRO</footer></main>
 <script>
 function say(t){document.getElementById('speech').textContent=t}document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tabcontent').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));say(({flights:'Ich prüfe deine Flugwünsche.',hotels:'Wir finden ein gemütliches Zuhause auf Zeit.',alarm:'Ich behalte die Preise im Blick.',plan:'Schritt für Schritt entsteht deine Reise.',budget:'Wir behalten die Reisekasse im Griff.'})[b.dataset.tab])}));document.getElementById('flight').onclick=()=>say('Ahoi! Deine Suchfilter stehen. Für echte Live-Preise fehlt noch eine Flugsuch-API.');document.getElementById('save').onclick=()=>{localStorage.setItem('hrnotes',document.getElementById('notes').value);say('Prima, deine Notiz ist gespeichert.')};document.getElementById('notes').value=localStorage.getItem('hrnotes')||'';function calc(){let n=id=>Number(document.getElementById(id).value)||0;document.getElementById('left').textContent=(n('total')-n('f')-n('h')-n('o')).toLocaleString('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0})}['total','f','h','o'].forEach(id=>document.getElementById(id).addEventListener('input',calc));calc();if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+// Lokale Speicherung aller Reiseeingaben auf diesem Gerät
+(function(){
+ const fields=[...document.querySelectorAll('input,textarea')];
+ fields.forEach((field,index)=>{
+   if(!field.id) field.id='hr-field-'+index;
+   const key='herr-reisezeit:'+field.id;
+   const saved=localStorage.getItem(key);
+   if(saved!==null) field.value=saved;
+   field.addEventListener('input',()=>localStorage.setItem(key,field.value));
+   field.addEventListener('change',()=>localStorage.setItem(key,field.value));
+ });
+})();
 </script></body></html>
